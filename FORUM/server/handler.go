@@ -29,12 +29,44 @@ func NewHandler(repos *repository.Repository) *Handler {
 	return &Handler{repos: repos}
 }
 
+
+s.mux.HandleFunc("/signin", s.handler.SignIn)
+	s.mux.HandleFunc("/signup", s.handler.SignUp)
+	s.mux.HandleFunc("/logout", sessReq(s.handler.LogOut))
+
+	s.mux.HandleFunc("/post/create", s.handler.SessMiddleware(s.handler.CreatePost))
+
+	s.mux.HandleFunc("/post", s.handler.GetPost)
+	s.mux.HandleFunc("/post/liked", sessReq(s.handler.ListPostLikedByUser))
+	s.mux.HandleFunc("/post/users", sessReq(s.handler.ListPostCreatedByUser))
+	s.mux.HandleFunc("/post/comment", sessReq(s.handler.CreateComments))
+	s.mux.HandleFunc("/post/vote", sessReq(s.handler.CreateVote))
+	s.mux.HandleFunc("/comment/vote", sessReq(s.handler.CreateVoteComment))
+dddd
+
 func Server(h *Handler) {
 	http.HandleFunc("/", h.homePage)
-	http.HandleFunc("/registration", h.registration)
+
+	//POST and GET
+	//Auth Handlers
 	http.HandleFunc("/login", h.login)
-	http.HandleFunc("/posts", h.posts)
-	http.HandleFunc("/postPage", h.posts)
+	http.HandleFunc("/registration", h.registration)
+	http.HandleFunc("/logout", h.logout)
+	
+	//GET only Query selectors: categories={category_id} | created_by={author_id} | liked_by={author_id}
+	http.HandleFunc("/posts", h.gestPostsAndLikes)
+	http.HandleFunc("/v1/posts", h.memberPostsAndLikes)
+
+	//GET only Query selectors: post_id={post_id}
+	http.HandleFunc("/postPage", h.gestPostPageWithComments)
+	http.HandleFunc("/v1/postPage", h.memberPostPageWithComments)
+
+	//POST only
+	http.HandleFunc("/v1/post/create", h.memberPostCreate)
+	http.HandleFunc("/v1/comment/create", h.memberCommentCreate)
+	http.HandleFunc("/v1//post/like", h.memberLikeForPost)
+	http.HandleFunc("/v1/comment/like", h.memberLikeForComment)
+
 
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
 	log.Println("Starting a web server on http://localhost:8081/ ")
