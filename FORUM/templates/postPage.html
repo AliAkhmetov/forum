@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css" media="screen">
+
+    <title>FORUM</title>
+
+</head>
+<body>
+  <header class="header">
+    <!-- Logo -->
+    <a href="#" class="logo">Post</a>
+
+    <!-- Hamburger icon -->
+    <input class="side-menu" type="checkbox" id="side-menu"/>
+    <label class="hamb" for="side-menu"><span class="hamb-line"></span></label>
+
+
+    <!-- Menu -->
+    <nav class="nav withoverflow">
+      <div class="menu">
+          <div><a class="menu-a" href="/posts">All Posts</a></div>
+          <div><a class="menu-a" href="/registration">Registration</a></div>
+          <div><a class="menu-a" href="/login">Login</a></div>
+        </div>
+    </nav>
+</header>
+  <h1>Post</h1>
+  <div id="slideContainer" class="artist"></div>
+  <div class="container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>City</th>
+          <th>Country</th>
+          <th>Day</th>
+        </tr>
+      </thead>
+      <tbody id="calendar-body">
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
+
+<script> 
+  var artist = {{.}}
+  console.log(artist)
+  str =  '<img src=' + artist.image +' class="image">'
+  str += '<h2 class="artist">Name - ' + artist.name +'</h2>'
+  str += '<h2 class="artist">Creation Date - ' + artist.creationDate +'</h2>'
+  str += '<h2 class="artist">First Album - ' + artist.firstAlbum +'</h2>'
+  str += '<h2 class="artistText">Members</h2>'
+  str += '<ul class="members">'
+    artist.members.forEach(element => {
+      str +=  '<li>'+ element + '</li>';
+    });
+  str += '</ul>'
+
+  
+  var dict = artist.DatesLocations
+console.log(dict)
+  var res = ""
+  for(var loc in dict) {
+    res += "<tr>"
+    console.log(loc)
+    sityCountry = loc.toUpperCase().split('-')
+    res += '<td>' + sityCountry[0] + '</td>'
+    res += '<td>' + sityCountry[1] + '</td>'
+
+    var day = dict[loc];
+    console.log(day)
+
+    dayStr = ""
+    day.forEach((val)=>{
+      val = val.replaceAll('-', '.')
+      dayStr += val + ';\n'
+    })
+    res += '<td>' + dayStr + '</td>'
+    res += '</tr>'
+  }
+
+
+  document.getElementById("slideContainer").innerHTML = str;
+  document.getElementById("calendar-body").innerHTML = res;
+</script> 
